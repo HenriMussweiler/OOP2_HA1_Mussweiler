@@ -1,3 +1,7 @@
+package Verwaltung;
+
+import Fitnessstudio.Buchung;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,9 +18,10 @@ public class BuchungsVerwaltung {
         List<Buchung> buchungen = new ArrayList<>();
         BufferedReader br = null;
         String line = "";
-        String cvsSplitBy = ",";
+        String cvsSplitBy = ", ";
         try {
             br = new BufferedReader(new FileReader(fileName));
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(cvsSplitBy);
                 int mitgliedsnummer = Integer.parseInt(values[0]);

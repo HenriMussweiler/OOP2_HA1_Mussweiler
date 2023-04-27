@@ -1,3 +1,5 @@
+package Fitnessstudio;
+
 import java.util.Date;
 
 public class Kurs {

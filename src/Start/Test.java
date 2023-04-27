@@ -1,3 +1,10 @@
+package Start;
+
+import Verwaltung.BuchungsVerwaltung;
+import Verwaltung.KursVerwaltung;
+import Verwaltung.MitgliederVerwaltung;
+import Fitnessstudio.*;
+
 import java.text.ParseException;
 import java.util.*;
 import java.io.FileWriter;
@@ -6,70 +13,73 @@ import java.util.Date;
 
 
 public class Test {
-
-    private MitgliederVerwaltung mitgliederVerwaltung;
+    private static MitgliederVerwaltung mitgliederVerwaltung = new MitgliederVerwaltung();
+    private static KursVerwaltung kursVerwaltung = new KursVerwaltung();
+    private static BuchungsVerwaltung buchungsVerwaltung = new BuchungsVerwaltung();
     private static Mitglied mitglied;
     private static Collection<Mitglied> mitglieder;
     private static Collection<Kurs> kurse;
     private static Collection<Buchung> buchungen;
+    private static final String filepath = "src/BereitgestellteDateien/";
 
     public static void main(String[] args) {
         // Lade Mitglieder, Kurse und Buchungen aus CSV-Dateien
-        MitgliederVerwaltung mitgliederVerwaltung = new MitgliederVerwaltung();
-        KursVerwaltung kursVerwaltung = new KursVerwaltung();
-        BuchungsVerwaltung buchungsVerwaltung = new BuchungsVerwaltung();
         try {
-            mitglieder = mitgliederVerwaltung.read("mitglieder.csv");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+            mitglieder = mitgliederVerwaltung.read(filepath + "mitglieder.csv");
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
         try {
-            kurse = kursVerwaltung.read("kurse.csv");
+            kurse = kursVerwaltung.read(filepath +"kurse.csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        buchungen = buchungsVerwaltung.read("buchungen.csv");
+        buchungen = buchungsVerwaltung.read(filepath + "buchungen.csv");
 
-        // Login des Mitglieds
-        login("max.mustermann@example.com", "mypassword");
-
-        // Anzeige des Menüs
-        anzeigenMenu();
+        // Login des Mitglieds und anzeigen des Menüs
+        boolean success = true;
+        while(success) {
+            if (mitglied != null) {
+                anzeigenMenu();
+            } else {
+                success = login();
+            }
+        }
     }
 
-    public void login() {
+    public static boolean login() {
         Scanner scanner = new Scanner(System.in);
 
         // Anmeldeinformationen vom Benutzer abfragen
+        System.out.println("Bitte melden Sie sich an!");
         System.out.print("E-Mail-Adresse: ");
         String email = scanner.nextLine();
         System.out.print("Passwort: ");
         String password = scanner.nextLine();
 
-        // MitgliederVerwaltung-Objekt erstellen und Mitglied einloggen
-        MitgliederVerwaltung mitgliederVerwaltung = new MitgliederVerwaltung();
+        // Verwaltung.MitgliederVerwaltung-Objekt erstellen und Fitnessstudio.Mitglied einloggen
         boolean success = mitgliederVerwaltung.login(email, password);
 
         if (success) {
             System.out.println("Anmeldung erfolgreich.");
+            mitglied = mitgliederVerwaltung.getMitglied(email, password);
         } else {
             System.out.println("Anmeldung fehlgeschlagen.");
+            System.out.println("Programm wird beendet.");
         }
+        return success;
     }
-
 
     private static void anzeigenMenu() {
         Scanner scanner = new Scanner(System.in);
         String option = "";
         while (!option.equals("e")) {
             System.out.println("Menü:");
-            System.out.println("a) Kurs buchen");
+            System.out.println("a) Fitnessstudio.Kurs buchen");
             System.out.println("b) Buchungen anzeigen");
-            System.out.println("c) Buchung stornieren");
+            System.out.println("c) Fitnessstudio.Buchung stornieren");
             System.out.println("d) Speichern");
-            System.out.println("e) Beenden");
+            System.out.println("e) Abmelden");
             System.out.print("Option wählen (a-e): ");
             option = scanner.nextLine();
             switch (option) {
@@ -86,13 +96,17 @@ public class Test {
                     speichern();
                     break;
                 case "e":
-                    System.out.println("Programm beendet.");
+                    abmelden();
                     break;
                 default:
                     System.out.println("Fehler: Ungültige Option.");
                     break;
             }
         }
+    }
+
+    private static void abmelden() {
+        mitglied = null;
     }
 
     private static void buchenKurs() {
@@ -111,7 +125,7 @@ public class Test {
                 if (kurs.getTeilnehmerzahl() < kurs.getMaximaleTeilnehmer()) {
                     gebuchterKurs = kurs;
                 } else {
-                    System.out.println("Fehler: Der Kurs ist bereits voll.");
+                    System.out.println("Fehler: Der Fitnessstudio.Kurs ist bereits voll.");
                     return;
                 }
             }
@@ -123,7 +137,7 @@ public class Test {
         Buchung neueBuchung = new Buchung(mitglied.getNummer(), gebuchterKurs.getNummer(), new Date());
         buchungen.add(neueBuchung);
         gebuchterKurs.setTeilnehmerzahl(gebuchterKurs.getTeilnehmerzahl() + 1);
-        System.out.println("Erfolgreich gebucht für Kurs " + gebuchterKurs.getName() + " am " + gebuchterKurs.getDatum() + " um " + gebuchterKurs.getStartzeit() + ".");
+        System.out.println("Erfolgreich gebucht für Fitnessstudio.Kurs " + gebuchterKurs.getName() + " am " + gebuchterKurs.getDatum() + " um " + gebuchterKurs.getStartzeit() + ".");
     }
 
     private static void anzeigenBuchungen() {
@@ -147,7 +161,7 @@ public class Test {
 
     private static void stornierenBuchung() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Geben Sie die Nummer der Buchung ein, die storniert werden soll: ");
+        System.out.print("Geben Sie die Nummer der Fitnessstudio.Buchung ein, die storniert werden soll: ");
         int buchungsNummer = scanner.nextInt();
         Buchung buchung = null;
         for (Buchung b : buchungen) {
@@ -157,7 +171,7 @@ public class Test {
             }
         }
         if (buchung == null) {
-            System.out.println("Fehler: Buchung nicht gefunden.");
+            System.out.println("Fehler: Fitnessstudio.Buchung nicht gefunden.");
             return;
         }
         Kurs kurs = null;
@@ -168,12 +182,12 @@ public class Test {
             }
         }
         if (kurs == null) {
-            System.out.println("Fehler: Kurs nicht gefunden.");
+            System.out.println("Fehler: Fitnessstudio.Kurs nicht gefunden.");
             return;
         }
         buchungen.remove(buchung);
         kurs.setTeilnehmerzahl(kurs.getTeilnehmerzahl() - 1);
-        System.out.println("Buchung erfolgreich storniert.");
+        System.out.println("Fitnessstudio.Buchung erfolgreich storniert.");
     }
 
     private static void speichern() {
