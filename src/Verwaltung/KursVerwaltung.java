@@ -23,10 +23,9 @@ public class KursVerwaltung {
             int nummer = Integer.parseInt(values[0]);
             String name = values[1];
             Date datum = null;
-            Date startzeit = null;
+            //Date startzeit = null;
             try {
-                datum = new SimpleDateFormat("yyyy-MM-dd").parse(values[2]);
-                startzeit = new SimpleDateFormat("HH:mm").parse(values[3]);
+                datum = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(values[2] + " " + values[3]);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
@@ -34,7 +33,7 @@ public class KursVerwaltung {
             String trainer = values[5];
             int maxTeilnehmer = Integer.parseInt(values[6]);
 
-            Kurs kurs = new Kurs(nummer, name, datum, startzeit, dauer, trainer, maxTeilnehmer);
+            Kurs kurs = new Kurs(nummer, name, datum, dauer, trainer, maxTeilnehmer);
             kursCollection.add(kurs);
         }
         reader.close();

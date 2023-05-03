@@ -1,5 +1,6 @@
 package Fitnessstudio;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Kurs {
@@ -11,11 +12,10 @@ public class Kurs {
     private int maximaleTeilnehmer;
     private int teilnehmerzahl;
 
-    public Kurs(Integer nummer, String name, Date datum, Date startzeit, Integer dauer, String trainer, Integer maximaleTeilnehmer) {
+    public Kurs(int nummer, String name, Date datum, int dauer, String trainer, int maximaleTeilnehmer) {
         this.nummer = nummer;
         this.name = name;
         this.datum = datum;
-        this.startzeit = startzeit;
         this.dauer = dauer;
         this.trainer = trainer;
         this.maximaleTeilnehmer = maximaleTeilnehmer;
@@ -45,14 +45,6 @@ public class Kurs {
 
     public void setDatum(Date datum) {
         this.datum = datum;
-    }
-
-    public Date getStartzeit() {
-        return startzeit;
-    }
-
-    public void setStartzeit(Date startzeit) {
-        this.startzeit = startzeit;
     }
 
     public int getDauer() {
