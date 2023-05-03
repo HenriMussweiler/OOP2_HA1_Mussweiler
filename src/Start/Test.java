@@ -36,6 +36,10 @@ public class Test {
         }
         buchungen = buchungsVerwaltung.read(filepath + "buchungen.csv");
 
+        //Buchungen in den Kursen aktivieren
+        buchungenAktivieren();
+
+
         // Login des Mitglieds und anzeigen des Menüs
         boolean success = true;
         while(success) {
@@ -43,6 +47,16 @@ public class Test {
                 anzeigenMenu();
             } else {
                 success = login();
+            }
+        }
+    }
+
+    private static void buchungenAktivieren() {
+        for (Buchung buchung : buchungen) {
+            for (Kurs kurs : kurse) {
+                if (buchung.getKursnummer()==kurs.getNummer()) {
+                    kurs.setTeilnehmerzahl(kurs.getTeilnehmerzahl() + 1);
+                }
             }
         }
     }
@@ -75,9 +89,9 @@ public class Test {
         String option = "";
         while (!option.equals("e")) {
             System.out.println("Menü:");
-            System.out.println("a) Fitnessstudio.Kurs buchen");
+            System.out.println("a) Kurs buchen");
             System.out.println("b) Buchungen anzeigen");
-            System.out.println("c) Fitnessstudio.Buchung stornieren");
+            System.out.println("c) Buchung stornieren");
             System.out.println("d) Speichern");
             System.out.println("e) Abmelden");
             System.out.print("Option wählen (a-e): ");
@@ -114,7 +128,7 @@ public class Test {
         System.out.println("Verfügbare Kurse:");
         for (Kurs kurs : kurse) {
             if (kurs.getTeilnehmerzahl() < kurs.getMaximaleTeilnehmer()) {
-                System.out.println(kurs.getNummer() + ") " + kurs.getName() + " am " + kurs.getDatum() + " um " + kurs.getStartzeit() + " (noch " + (kurs.getMaximaleTeilnehmer() - kurs.getTeilnehmerzahl()) + " freie Plätze)");
+                System.out.println(kurs.getNummer() + ") " + kurs.getName() + " am " + kurs.getDatumAsString() + " (noch " + (kurs.getMaximaleTeilnehmer() - kurs.getTeilnehmerzahl()) + " freie Plätze)");
             }
         }
         System.out.print("Kursnummer wählen: ");
@@ -137,17 +151,21 @@ public class Test {
         Buchung neueBuchung = new Buchung(mitglied.getNummer(), gebuchterKurs.getNummer(), new Date());
         buchungen.add(neueBuchung);
         gebuchterKurs.setTeilnehmerzahl(gebuchterKurs.getTeilnehmerzahl() + 1);
-        System.out.println("Erfolgreich gebucht für Fitnessstudio.Kurs " + gebuchterKurs.getName() + " am " + gebuchterKurs.getDatum() + " um " + gebuchterKurs.getStartzeit() + ".");
+        System.out.println("Erfolgreich gebucht für Kurs " + gebuchterKurs.getName() + " am " + gebuchterKurs.getDatumAsString() + ".");
     }
 
     private static void anzeigenBuchungen() {
         System.out.println("Buchungen für " + mitglied.getVorname() + " " + mitglied.getNachname() + ":");
+        buchungsAufruf();
+    }
+
+    private static void buchungsAufruf() {
         boolean gefunden = false;
         for (Buchung buchung : buchungen) {
             if (buchung.getMitgliedsnummer() == mitglied.getNummer()) {
                 for (Kurs kurs : kurse) {
                     if (kurs.getNummer() == buchung.getKursnummer()) {
-                        System.out.println("- " + kurs.getName() + " am " + kurs.getDatum() + " um " + kurs.getStartzeit());
+                        System.out.println(kurs.getNummer() + ". " + kurs.getName() + " am " + kurs.getDatumAsString());
                         gefunden = true;
                         break;
                     }
@@ -159,9 +177,11 @@ public class Test {
         }
     }
 
+
     private static void stornierenBuchung() {
+        buchungsAufruf();
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Geben Sie die Nummer der Fitnessstudio.Buchung ein, die storniert werden soll: ");
+        System.out.print("Geben Sie die Nummer der Buchung ein, die storniert werden soll: ");
         int buchungsNummer = scanner.nextInt();
         Buchung buchung = null;
         for (Buchung b : buchungen) {
@@ -171,7 +191,7 @@ public class Test {
             }
         }
         if (buchung == null) {
-            System.out.println("Fehler: Fitnessstudio.Buchung nicht gefunden.");
+            System.out.println("Fehler: Buchung nicht gefunden.");
             return;
         }
         Kurs kurs = null;
@@ -182,12 +202,12 @@ public class Test {
             }
         }
         if (kurs == null) {
-            System.out.println("Fehler: Fitnessstudio.Kurs nicht gefunden.");
+            System.out.println("Fehler: Kurs nicht gefunden.");
             return;
         }
         buchungen.remove(buchung);
         kurs.setTeilnehmerzahl(kurs.getTeilnehmerzahl() - 1);
-        System.out.println("Fitnessstudio.Buchung erfolgreich storniert.");
+        System.out.println("Buchung erfolgreich storniert.");
     }
 
     private static void speichern() {

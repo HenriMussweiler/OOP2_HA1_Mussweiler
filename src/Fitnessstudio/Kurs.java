@@ -3,14 +3,13 @@ package Fitnessstudio;
 import java.util.Date;
 
 public class Kurs {
-    private Integer nummer;
+    private int nummer;
     private String name;
     private Date datum;
-    private Date startzeit;
-    private Integer dauer;
+    private int dauer;
     private String trainer;
-    private Integer maximaleTeilnehmer;
-    private Integer teilnehmerzahl;
+    private int maximaleTeilnehmer;
+    private int teilnehmerzahl;
 
     public Kurs(Integer nummer, String name, Date datum, Date startzeit, Integer dauer, String trainer, Integer maximaleTeilnehmer) {
         this.nummer = nummer;
@@ -24,11 +23,11 @@ public class Kurs {
 
     // Getter and Setter methods
 
-    public Integer getNummer() {
+    public int getNummer() {
         return nummer;
     }
 
-    public void setNummer(Integer nummer) {
+    public void setNummer(int nummer) {
         this.nummer = nummer;
     }
 
@@ -56,11 +55,11 @@ public class Kurs {
         this.startzeit = startzeit;
     }
 
-    public Integer getDauer() {
+    public int getDauer() {
         return dauer;
     }
 
-    public void setDauer(Integer dauer) {
+    public void setDauer(int dauer) {
         this.dauer = dauer;
     }
 
@@ -72,20 +71,24 @@ public class Kurs {
         this.trainer = trainer;
     }
 
-    public Integer getMaximaleTeilnehmer() {
+    public int getMaximaleTeilnehmer() {
         return maximaleTeilnehmer;
     }
 
-    public void setMaximaleTeilnehmer(Integer maximaleTeilnehmer) {
+    public void setMaximaleTeilnehmer(int maximaleTeilnehmer) {
         this.maximaleTeilnehmer = maximaleTeilnehmer;
     }
 
-    public Integer getTeilnehmerzahl() {
+    public int getTeilnehmerzahl() {
         return teilnehmerzahl;
     }
 
-    public void setTeilnehmerzahl(Integer teilnehmerzahl) {
+    public void setTeilnehmerzahl(int teilnehmerzahl) {
         this.teilnehmerzahl = teilnehmerzahl;
+    }
+
+    public String getDatumAsString() {
+        return new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm 'Uhr'").format(this.datum);
     }
 }
 
