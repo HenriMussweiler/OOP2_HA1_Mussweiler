@@ -7,7 +7,6 @@ import Fitnessstudio.*;
 
 import java.text.ParseException;
 import java.util.*;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
@@ -30,7 +29,7 @@ public class Test {
             throw new RuntimeException(e);
         }
         try {
-            kurse = kursVerwaltung.read(filepath +"kurse.csv");
+            kurse = kursVerwaltung.read(filepath + "kurse.csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +41,7 @@ public class Test {
 
         // Login des Mitglieds und anzeigen des Menüs
         boolean success = true;
-        while(success) {
+        while (success) {
             if (mitglied != null) {
                 anzeigenMenu();
             } else {
@@ -54,7 +53,7 @@ public class Test {
     private static void buchungenAktivieren() {
         for (Buchung buchung : buchungen) {
             for (Kurs kurs : kurse) {
-                if (buchung.getKursnummer()==kurs.getNummer()) {
+                if (buchung.getKursnummer() == kurs.getNummer()) {
                     kurs.setTeilnehmerzahl(kurs.getTeilnehmerzahl() + 1);
                 }
             }
@@ -211,21 +210,29 @@ public class Test {
     }
 
     private static void speichern() {
-
-        //TODO Unterschiedliche Fälle müssen noch berücksichtigt werden (1) Buchungen des angemeldeten Mitglieds oder (2) aller Mitglieder analog zur buchungen.csv Datei
-
-        try {
-            FileWriter writer = new FileWriter("buchungen.csv");
-            writer.write("Mitgliedsnummer,Kursnummer,Buchungsdatum\n");
-            for (Buchung buchung : buchungen) {
-                writer.write(buchung.getMitgliedsnummer() + "," + buchung.getKursnummer() + "," + buchung.getBuchungsdatum() + "\n");
-            }
-            writer.close();
-            System.out.println("Buchungen erfolgreich gespeichert.");
-        } catch (IOException e) {
-            System.out.println("Fehler: Buchungen konnten nicht gespeichert werden.");
-            e.printStackTrace();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Speichern:");
+        System.out.println("a) Nur meine Buchungen speichern");
+        System.out.println("b) Alle Buchungen speichern");
+        System.out.print("Option wählen (a/b): ");
+        String option = scanner.nextLine();
+        BuchungsVerwaltung buchungsVerwaltung = new BuchungsVerwaltung();
+        switch (option) {
+            case "a":
+                buchungsVerwaltung.writeForMember1("buchungenVonMitglied.ser", buchungen, mitglied);
+                buchungsVerwaltung.writeForMember2("buchungenVonMitglied2.ser", buchungen, mitglied);
+                break;
+            case "b":
+                try {
+                    buchungsVerwaltung.writeAll("alleBuchungen.csv", buchungen);
+                    System.out.println("Alle Buchungen wurden erfolgreich gespeichert.");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            default:
+                System.out.println("Fehler: Ungültige Option.");
+                break;
         }
     }
-
 }

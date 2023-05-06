@@ -23,7 +23,6 @@ public class KursVerwaltung {
             int nummer = Integer.parseInt(values[0]);
             String name = values[1];
             Date datum = null;
-            //Date startzeit = null;
             try {
                 datum = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(values[2] + " " + values[3]);
             } catch (ParseException e) {

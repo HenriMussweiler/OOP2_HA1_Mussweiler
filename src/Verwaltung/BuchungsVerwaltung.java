@@ -1,10 +1,9 @@
 package Verwaltung;
 
 import Fitnessstudio.Buchung;
+import Fitnessstudio.Mitglied;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,5 +42,46 @@ public class BuchungsVerwaltung {
         }
         return buchungen;
     }
+
+    public void writeForMember1(String filepath, Collection<Buchung> buchungen, Mitglied mitglied) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
+            Collection<Buchung> temporaereBuchungsListe = new ArrayList<>();
+            for (Buchung buchung : buchungen) {
+                if (buchung.getMitgliedsnummer() == mitglied.getNummer()) {
+                    temporaereBuchungsListe.add(buchung);
+                }
+            }
+            outputStream.writeObject(temporaereBuchungsListe);
+            System.out.println("Buchungen des Mitglieds " + mitglied.getEmail() + " wurden erfolgreich gespeichert.");
+        } catch (IOException e) {
+            System.out.println("Fehler beim Speichern der Buchungen des Mitglieds " + mitglied.getEmail() + ": " + e.getMessage());
+        }
+    }
+
+    public void writeForMember2(String filepath, Collection<Buchung> buchungen, Mitglied mitglied) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
+            for (Buchung buchung : buchungen) {
+                if (buchung.getMitgliedsnummer() == mitglied.getNummer()) {
+                    outputStream.writeObject(buchung);
+                }
+            }
+            System.out.println("Buchungen des Mitglieds " + mitglied.getEmail() + " wurden erfolgreich gespeichert.");
+        } catch (IOException e) {
+            System.out.println("Fehler beim Speichern der Buchungen des Mitglieds " + mitglied.getEmail() + ": " + e.getMessage());
+        }
+    }
+
+    public void writeAll(String filepath, Collection<Buchung> buchungen) throws IOException {
+        FileWriter fileWriter = new FileWriter(filepath);
+        BufferedWriter writer = new BufferedWriter(fileWriter);
+        writer.write("Mitgliedsnummer, Kursnummer, Buchungsdatum");
+        for (Buchung buchung : buchungen) {
+            writer.write("\n" + buchung.getMitgliedsnummer() + ", ");
+            writer.write(buchung.getKursnummer() + ", ");
+            writer.write(buchung.getBuchungsdatumAsString() + "");
+        }
+        writer.close();
+    }
+
 }
 
